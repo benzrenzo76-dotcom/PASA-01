@@ -2,21 +2,21 @@
 
 **POSIBLE NO DEMOSTRADO** — Procedimiento para el fundador; los resultados físicos siguen pendientes. No hay códigos USSD incluidos. Usá exclusivamente una consulta legítima, verificada con tu operadora y autorizada por vos; evitá altas/bajas, desvíos y cualquier código cuyo costo o efecto no conozcas.
 
-## APK entregado en esta sesión
+## APK compilado por GitHub Actions
 
-**POSIBLE NO DEMOSTRADO** — Para la prueba física podés descargar el APK entregado previamente en el chat y abrirlo con Mis archivos. El APK no se almacena en Git: las compilaciones de GitHub se distribuyen por Artifacts. Seguí los pasos de instalación desde el punto 4 de la sección siguiente. El ZIP de fuentes entregado en el chat incluye el proyecto y el workflow; no hace falta Android Studio para instalar el APK.
+**DEMOSTRADO POR PRUEBA** — [Descargá PASA-01-debug-apk](https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40063598577/artifacts/12548447755), generado en la [ejecución aprobada](https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40063598577). GitHub puede pedir iniciar sesión. Extraé el ZIP y abrí `app-debug.apk` con Mis archivos. El APK no se almacena en Git. No hace falta Android Studio ni una PC para instalarlo. El APK local entregado antes en el chat usa otra clave debug y podría requerir desinstalarlo para instalar el de CI; los resultados en memoria no se conservan.
 
 ## Obtener e instalar el APK sin PC
 
-**POSIBLE NO DEMOSTRADO** — Una vez subido este proyecto al repositorio elegido:
+**POSIBLE NO DEMOSTRADO** — Instalación manual pendiente de probar en el Samsung:
 
 1. Abrí GitHub en el navegador del celular, entrá al repositorio → Actions → **PASA-01 APK**.
-2. Ejecutá **Run workflow** si no existe una ejecución automática. Esperá que termine en verde.
+2. Elegí una ejecución verde. Mientras el PR #1 esté abierto, los eventos push y pull_request compilan la rama automáticamente. **Run workflow** estará disponible cuando el workflow esté integrado en la rama principal.
 3. Abrí la ejecución y descargá **PASA-01-debug-apk** en Artifacts (GitHub puede requerir iniciar sesión). Extraé el ZIP con Mis archivos de Samsung.
 4. Abrí `app-debug.apk`. Si Android lo solicita, habilitá temporalmente “Instalar apps desconocidas” sólo para Mis archivos o el navegador usado y deshabilitalo tras instalar. Las políticas del dispositivo o Auto Blocker de Samsung pueden impedirlo; no se afirma que la instalación se haya probado.
 5. Verificá que el nombre visible sea **PASA Lab**. El APK es debug para diagnóstico, firmado con una clave de desarrollo generada en el entorno de build; no es una versión de producción. Builds de distintos entornos pueden tener firmas distintas y requerir desinstalar el anterior.
 
-**DEPENDE DE TERCEROS** — No se puede publicar el artifact hasta contar con un repositorio GitHub y una ejecución del workflow. El código del workflow por sí solo no demuestra que corrió en GitHub.
+**DEMOSTRADO POR PRUEBA** — El artifact de la ejecución enlazada fue publicado; resultados y fuentes en PRUEBAS.md. **DEPENDE DE TERCEROS** — La descarga puede requerir sesión GitHub; los artifacts expiran, y GitHub puede aplicar límites de disponibilidad.
 
 ## Ejecutar en el Galaxy S21 FE
 

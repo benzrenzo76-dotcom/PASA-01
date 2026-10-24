@@ -16,7 +16,14 @@ Fecha: **2026-10-24**. Este registro separa verificación local, CI y teléfono 
 
 **DEMOSTRADO POR PRUEBA** — El 2026-10-24 se verificó acceso de lectura y escritura a https://github.com/benzrenzo76-dotcom/PASA-01 y se abrió el PR #1 con el proyecto existente. La primera ejecución de CI falló antes de compilar: setup-android intentó instalar el paquete obsoleto `tools`, inexistente en el repositorio SDK. Ejecución: https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40063512095. Se corrigió la configuración para instalar sólo `platform-tools`; SDK 35 y Build Tools se instalan en el paso siguiente.
 
-**NO VERIFICADO** — Compilación y artifact remoto de la configuración corregida: pendientes de observar la nueva ejecución. La compilación local aprobada se registra por separado.
+**DEMOSTRADO POR PRUEBA** — La configuración corregida pasó en GitHub Actions el 2026-10-24: https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40063598577. Commit de código probado: `4919078512ae4429736becb80546ffec816db503`. Job `android`: success; `testDebugUnitTest lintDebug assembleDebug`: BUILD SUCCESSFUL en 2m 35s. El paso Python pasó sus 3 pruebas en el runner. El código Android contiene los mismos 5 tests JVM aprobados localmente. Esto demuestra compilación y checks en CI, no funcionamiento físico de USSD.
+
+**DEMOSTRADO POR PRUEBA** — Artifacts publicados y no expirados al consultar el 2026-10-24:
+
+- [PASA-01-debug-apk](https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40063598577/artifacts/12548447755), ZIP de 8327839 bytes; digest del archivo de artifact informado por GitHub: `sha256:4d46cd67d79c7ebd7b8a6628fde73d68c34907bedd576e97ac0e19ccf2cdd3d2` (no es el hash del APK extraído).
+- [PASA-01-check-reports](https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40063598577/artifacts/12547959769), reportes de tests/lint.
+
+**CONFIRMADO EN DOCUMENTACIÓN** — Según los metadatos de artifact de esa ejecución, la expiración programada es 2027-01-22. Fuente API consultada el 2026-10-24: https://api.github.com/repos/benzrenzo76-dotcom/PASA-01/actions/runs/40063598577/artifacts. Se puede generar otro APK al cambiar código o workflow. La actualización posterior de estos enlaces sólo modifica documentación; no cambia el código compilado.
 
 ## Dispositivo físico
 
