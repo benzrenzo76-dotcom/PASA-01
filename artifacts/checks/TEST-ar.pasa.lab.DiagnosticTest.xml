@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ar.pasa.lab.DiagnosticTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-24T04:24:34" hostname="53e487cf10b4" time="0.087">
+  <properties/>
+  <testcase name="rejectsInvalidAndOversizedInput" classname="ar.pasa.lab.DiagnosticTest" time="0.029"/>
+  <testcase name="exportContainsOnlyDiagnosticMetadata" classname="ar.pasa.lab.DiagnosticTest" time="0.058"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

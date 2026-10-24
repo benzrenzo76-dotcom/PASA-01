@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ar.pasa.lab.FinancialEngineTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-10-24T05:13:45" hostname="53e487cf10b4" time="0.029">
+  <properties/>
+  <testcase name="simultaneousSixtyThousandCannotBothAccredit" classname="ar.pasa.lab.FinancialEngineTest" time="0.008"/>
+  <testcase name="canonicalFiveThousandTransferMovesRealLedgerAndConservesTotal" classname="ar.pasa.lab.FinancialEngineTest" time="0.001"/>
+  <testcase name="idempotencyKeyCannotChangePayload" classname="ar.pasa.lab.FinancialEngineTest" time="0.001"/>
+  <testcase name="cancelledPreparationCannotDebitAndRouterDiscardsOtherOperation" classname="ar.pasa.lab.FinancialEngineTest" time="0.001"/>
+  <testcase name="fakeFrontendBalanceCannotOverrideLedgerAndBetaOutagePreservesMoney" classname="ar.pasa.lab.FinancialEngineTest" time="0.001"/>
+  <testcase name="rejectsOverspendWithoutAnyPosting" classname="ar.pasa.lab.FinancialEngineTest" time="0.001"/>
+  <testcase name="aliasChangeDoesNotSilentlyRedirectPreparedPayment" classname="ar.pasa.lab.FinancialEngineTest" time="0.001"/>
+  <testcase name="duplicateConcurrentAuthorizationAndLostResponseProduceOneReceipt" classname="ar.pasa.lab.FinancialEngineTest" time="0.009"/>
+  <testcase name="parsingNeverUsesFloatingMoneyAndRejectsAmbiguousThousands" classname="ar.pasa.lab.FinancialEngineTest" time="0.002"/>
+  <testcase name="tokenBindsEveryAuthorizationFieldAndCannotAuthorizeAnotherOperation" classname="ar.pasa.lab.FinancialEngineTest" time="0.001"/>
+  <testcase name="expiryAndInvalidAmountsNeverPost" classname="ar.pasa.lab.FinancialEngineTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

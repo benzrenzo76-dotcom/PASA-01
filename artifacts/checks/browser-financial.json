@@ -1,0 +1,15 @@
+{
+  "browser": "Chromium",
+  "viewport": "393x852",
+  "simulation": true,
+  "tests": [
+    "alias lookup",
+    "prepare/confirm 5000ARS",
+    "95000/25000 final balances",
+    "reload persistence",
+    "lost confirmation PENDING after actual commit",
+    "status recovery ACCREDITED without duplicate",
+    "mobile no horizontal overflow"
+  ],
+  "errors": []
+}

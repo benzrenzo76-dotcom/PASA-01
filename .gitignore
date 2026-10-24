@@ -7,3 +7,9 @@ local.properties
 __pycache__/
 /artifacts/*.apk
 /artifacts/*.zip
+node_modules/
+**/dist/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+/sites/

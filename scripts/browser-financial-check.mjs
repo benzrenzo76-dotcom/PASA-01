@@ -1,0 +1,30 @@
+const {chromium}=await import(process.env.PASA_PLAYWRIGHT_MODULE || 'playwright-core');
+import fs from 'node:fs';
+fs.mkdirSync('/workspace/artifacts/checks',{recursive:true});
+const browser=await chromium.launch({executablePath:process.env.PASA_CHROMIUM || '/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+const context=await browser.newContext({viewport:{width:393,height:852},isMobile:true,hasTouch:true});
+const p=await context.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('dialog',d=>d.accept());
+const check=(c,m)=>{if(!c)throw Error(m)};
+const balances=()=>p.evaluate(async()=>{const {Lab}=await import('./engine.mjs');const l=await new Lab().open();const s=await l.state();return s.accounts.map(a=>a.balance)});
+try {
+ await p.goto(process.env.PASA_PANEL_URL || 'http://127.0.0.1:8765');await p.locator('#accounts .account').first().waitFor();
+ await p.locator('#reset').click();await p.waitForTimeout(100);
+ await p.locator('#profile').selectOption('Red ideal');
+ await p.locator('#lookup').click();await p.locator('#aliasResult').filter({hasText:'Kiosco'}).waitFor();
+ await p.locator('#prepareButton').click();await p.locator('#confirmButton').waitFor({state:'visible'});
+ await p.locator('#confirmButton').click();await p.waitForFunction(()=>document.querySelector('#receipt').textContent.includes('ACCREDITED'));
+ check(JSON.stringify(await balances())==='[9500000,2500000]','Incorrect example balances');
+ await p.reload();await p.locator('#accounts .account').first().waitFor();check(JSON.stringify(await balances())==='[9500000,2500000]','Persistence failed');
+ await p.locator('#reset').click();await p.waitForTimeout(100);await p.locator('#profile').selectOption('Red ideal');
+ await p.locator('#prepareButton').click();await p.locator('#confirmButton').waitFor({state:'visible'});
+ await p.locator('#profile').selectOption('Pérdida de confirmación');await p.locator('#confirmButton').click();
+ await p.waitForFunction(()=>document.querySelector('#receipt').textContent.includes('PENDIENTE'));
+ check(JSON.stringify(await balances())==='[9500000,2500000]','Lost confirmation did not commit exactly once');
+ await p.locator('#queryButton').click();await p.waitForFunction(()=>document.querySelector('#receipt').textContent.includes('ACCREDITED'));
+ await p.locator('#queryButton').click();check(JSON.stringify(await balances())==='[9500000,2500000]','Status duplicated transfer');
+ await p.screenshot({path:'/workspace/artifacts/checks/control-center-mobile.png',fullPage:true});
+ check(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile horizontal overflow');
+ check(errors.length===0,'Browser errors: '+errors.join(';'));
+ const result={browser:'Chromium',viewport:'393x852',simulation:true,tests:['alias lookup','prepare/confirm 5000ARS','95000/25000 final balances','reload persistence','lost confirmation PENDING after actual commit','status recovery ACCREDITED without duplicate','mobile no horizontal overflow'],errors};
+ fs.writeFileSync('/workspace/artifacts/checks/browser-financial.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
+}finally{await browser.close();}
