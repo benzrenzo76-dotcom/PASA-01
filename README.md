@@ -2,6 +2,8 @@
 
 **DEMOSTRADO POR PRUEBA** — Laboratorio ficticio con motores transaccionales, red virtual, panel móvil y app Android; conserva el diagnóstico USSD anterior. No se usa dinero real ni se integra una operadora o banco comercial.
 
+- [Descargar APK Financial Lab](https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40065674630/artifacts/12549173012) — generado por GitHub Actions.
+- [Workflow financiero aprobado](https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40065674630).
 - [Abrir PASA Control Center](https://pasa-control-center-lab.silver-smile-5741.chatgpt.site) — publicado con Sites, privado para el fundador; puede requerir iniciar sesión. Motor IndexedDB de ese navegador, independiente del APK.
 - [Probar desde Samsung](docs/FINANCIAL-SAMSUNG.md).
 - [Resultados de tests y CI](docs/FINANCIAL-PRUEBAS.md).

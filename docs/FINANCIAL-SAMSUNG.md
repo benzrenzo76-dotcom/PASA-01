@@ -2,7 +2,7 @@
 
 **POSIBLE NO DEMOSTRADO** — Esta guía habilita una simulación local independiente por entorno. El diagnóstico USSD real conserva su pantalla y permisos; nunca ingreses mensajes de transferencia de laboratorio como códigos reales.
 
-1. Instalá el APK Financial Lab descargado de una ejecución verde de GitHub Actions. Si hay conflicto de firma con el APK anterior, exportá los diagnósticos que quieras conservar y desinstalá la versión anterior antes de instalar. No se afirma haber probado ese procedimiento en tu S21 FE.
+1. Descargá [PASA-Financial-Lab-apk](https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40065674630/artifacts/12549173012) de la ejecución aprobada, extraé el ZIP con Mis archivos y abrí app-debug.apk. GitHub puede requerir iniciar sesión. Si Android lo pide, habilitá temporalmente instalar apps desconocidas para Mis archivos y deshabilitalo al terminar. Si hay conflicto de firma con el APK anterior, exportá los diagnósticos que quieras conservar y desinstalá la versión anterior antes de instalar. No se afirma haber probado ese procedimiento en tu S21 FE.
 2. Elegí simulación local. Las cuentas iniciales ficticias son Joaquín/Banco Alfa ($100.000 ARS) y Kiosco Pepito/Banco Beta ($20.000 ARS).
 3. Consultá `kiosco.pepito`, ingresá $5.000, prepará y revisá destinatario/importe antes de confirmar. El resultado esperado tras acreditar es $95.000/$25.000. La ejecución real y sus tests determinan si eso ocurrió.
 4. Observá los eventos: red virtual, gateway, procesamiento, confirmación. No se usa una operadora. Elegí pérdida de confirmación para comprobar que el saldo se modifica una sola vez y que consultar estado resuelve el resultado pendiente.

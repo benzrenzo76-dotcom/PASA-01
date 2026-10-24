@@ -1,5 +1,7 @@
 # Pruebas PASA-01
 
+**CONFIRMADO EN DOCUMENTACIÓN** — Registro histórico del diagnóstico original, anterior a Financial Laboratory. Para el estado de la ampliación consultar FINANCIAL-PRUEBAS.md. Las referencias a ausencia de código financiero describen esa etapa anterior, no la ampliación actual.
+
 Fecha: **2026-10-24**. Este registro separa verificación local, CI y teléfono físico.
 
 ## Ejecutado localmente
