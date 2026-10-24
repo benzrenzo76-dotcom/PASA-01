@@ -1,4 +1,4 @@
-name: PASA-01 APK
+name: PASA Financial Laboratory
 on:
   push:
   pull_request:
@@ -6,7 +6,57 @@ on:
 permissions:
   contents: read
 jobs:
+  laboratory:
+    name: Laboratory / ${{ matrix.component }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        component: [backend, gateway-simulator, control-center]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: ${{ matrix.component }}/package-lock.json
+      - name: Install reproducible dependencies
+        working-directory: ${{ matrix.component }}
+        run: npm ci
+      - name: Compile component
+        working-directory: ${{ matrix.component }}
+        run: npm run build
+      - name: Build banking engine for real loopback gateway tests
+        if: matrix.component == 'gateway-simulator'
+        working-directory: backend
+        run: |
+          npm ci
+          npm run build
+      - name: Run transactional and simulation checks
+        working-directory: ${{ matrix.component }}
+        run: npm test 2>&1 | tee test-output.txt
+      - name: Upload compiled laboratory component
+        uses: actions/upload-artifact@v4
+        with:
+          name: PASA-${{ matrix.component }}
+          path: ${{ matrix.component }}/dist/
+          if-no-files-found: error
+      - name: Upload component check output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PASA-${{ matrix.component }}-checks
+          path: |
+            ${{ matrix.component }}/test-output.txt
+            ${{ matrix.component }}/coverage/
+            ${{ matrix.component }}/test-results/
+          if-no-files-found: ignore
   android:
+    name: Android / APK and diagnostic checks
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -25,18 +75,20 @@ jobs:
       - name: Unit tests, lint and APK
         working-directory: android
         run: bash ./gradlew --no-daemon testDebugUnitTest lintDebug assembleDebug
-      - name: HTTP simulation tests
+      - name: Original HTTP simulation and Android policy tests
         run: python3 -m unittest discover -s gateway-simulator -v
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: PASA-01-debug-apk
+          name: PASA-Financial-Lab-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-      - name: Upload check reports
+      - name: Upload Android check reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: PASA-01-check-reports
-          path: android/app/build/reports/
+          path: |
+            android/app/build/reports/
+            android/app/build/test-results/
           if-no-files-found: ignore

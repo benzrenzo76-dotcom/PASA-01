@@ -15,3 +15,13 @@
 **POSIBLE NO DEMOSTRADO** — El simulador Python está aislado en `gateway-simulator/`, escucha sólo loopback y no lo consume Android. Representa una respuesta HTTP futura, sin USSD, dinero, saldos ni proveedor real. No constituye el gateway de Fase 2.
 
 **NO VERIFICADO** — Reinicio/muerte del proceso pierde el diagnóstico en memoria. La app no puede recuperar ni cancelar la sesión USSD previa. No abrir otra prueba hasta verificar su finalización con la operadora. Un servicio persistente o recuperación se evaluará sólo si el experimento lo requiere.
+
+# Ampliación Financial Laboratory — contrato v0.1
+
+**POSIBLE NO DEMOSTRADO** — La orden posterior del fundador habilita un laboratorio financiero ficticio P0. Se conservan el diagnóstico real y su historial. Nuevos módulos: `backend/` (motor SQLite y API loopback TypeScript), `gateway-simulator/` (VirtualUssdGateway), `control-center/` (panel y motor IndexedDB), `android/` (motor SQLite local). No se usan bancos reales ni se da por viable USSD financiero comercial.
+
+**POSIBLE NO DEMOSTRADO** — Tres almacenes locales independientes: SQLite del backend, IndexedDB del navegador y SQLite de Android. Todos controlan los saldos dentro del motor, con validación y escrituras atómicas; no es un contador visual. El backend es la autoridad cuando se usa su API. No hay sincronización entre los motores locales y se muestra esa separación en las interfaces. La opción remota compartida es P1 hasta desplegar una API con acceso controlado.
+
+**POSIBLE NO DEMOSTRADO** — Se eligió SQLite nativo y Node 22+ para reproducibilidad sin Cloudflare; la nueva orden del fundador permite esa alternativa. No se añade una integración D1 a medias ni se contratan servicios. Los adaptadores reales requieren acuerdos, autenticación y conciliación distintos al proveedor ficticio atómico.
+
+**POSIBLE NO DEMOSTRADO** — Los motores locales pueden imponer límites más estrictos de importe que el API del contrato: el panel limita a $1.000.000 por operación; todos conservan centavos enteros. Los datos de las tres instancias no se sincronizan. Un despliegue estático sirve archivos, no despliega el motor SQLite del backend.

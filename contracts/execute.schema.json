@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pasa:execute:v0.1",
+  "title": "SIMULATION ONLY Execute v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "operationId",
+    "authorization",
+    "sourceId",
+    "destinationId",
+    "amountCents",
+    "currency",
+    "expiresAt",
+    "nonce"
+  ],
+  "properties": {
+    "operationId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "authorization": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "sourceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "destinationId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "amountCents": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000000000
+    },
+    "currency": {
+      "const": "ARS"
+    },
+    "expiresAt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "rejectBank": {
+      "type": "boolean",
+      "description": "SIMULACION: inyecta rechazo solamente, nunca aprueba ni cambia saldos."
+    }
+  }
+}

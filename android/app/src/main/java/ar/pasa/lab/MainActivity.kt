@@ -24,6 +24,13 @@ class MainActivity : ComponentActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         enableEdgeToEdge()
         setContent {
+            var financial by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(true) }
+            if (financial) {
+                MaterialTheme(colorScheme = lightColorScheme(primary = androidx.compose.ui.graphics.Color(0xFF006B5E))) {
+                    FinancialScreen(onDiagnostic = { financial = false })
+                }
+                return@setContent
+            }
             val model: LabViewModel = viewModel()
             var confirm by remember { mutableStateOf(false) }
             var exportStatus by remember { mutableStateOf("") }
@@ -39,9 +46,14 @@ class MainActivity : ComponentActivity() {
             }
             LaunchedEffect(Unit) { model.refresh() }
             MaterialTheme(colorScheme = lightColorScheme(primary = androidx.compose.ui.graphics.Color(0xFF006B5E))) {
-                Scaffold { padding ->
+                Scaffold(topBar = {
+                    Surface(color = androidx.compose.ui.graphics.Color(0xFFFFE7B8)) {
+                        Text("DIAGNÓSTICO USSD REAL · autorización manual", Modifier.fillMaxWidth().statusBarsPadding().padding(12.dp), style = MaterialTheme.typography.labelLarge)
+                    }
+                }) { padding ->
                     Column(Modifier.padding(padding).padding(20.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text("PASA Lab", style = MaterialTheme.typography.headlineLarge)
+                        OutlinedButton(onClick = { financial = true }, enabled = !model.busy) { Text("Volver al laboratorio financiero local") }
                         Text("PASA-01 · Diagnóstico USSD real", style = MaterialTheme.typography.titleMedium)
                         Text("Sin internet para enviar USSD. Requiere señal móvil. No realiza transferencias ni contacta un backend PASA.")
                         Text(if (model.supported) "API 26+ y telefonía detectadas. Soporte efectivo: pendiente de prueba." else "Dispositivo sin requisitos de telefonía para esta prueba.")

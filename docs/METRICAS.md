@@ -1,0 +1,9 @@
+# Métricas y evidencia del laboratorio
+
+**NO VERIFICADO independientemente** — El fundador reportó el 2026-10-24 mediciones de diagnóstico en su Samsung S21 FE: habitual aproximado 300 ms, mínimo 190 ms, medición documentada 436 ms, pico 1350 ms y máximo 1915 ms; API36, Wi-Fi/datos desactivados, sin internet validado, cobertura telefónica y callback recibido. La fuente es el reporte del fundador en esta conversación. No se dispone aquí de la muestra cruda ni de una exportación para reproducir su análisis.
+
+**POSIBLE NO DEMOSTRADO** — El perfil “PASA-01 Observado” usa esos valores como escenarios artificiales ilustrativos. No representa una distribución estadística, percentiles reales ni latencia financiera. Gateway/API/bancos ficticios tienen tiempos propios medidos cuando se ejecutan; las demoras artificiales se registran separadas. El tiempo real total incluye la espera artificial y el costo del software: restar artificial a total no mide una red comercial.
+
+**POSIBLE NO DEMOSTRADO** — Mediana/P95/P99 del panel se calculan exclusivamente sobre las muestras del simulador ejecutadas en esa instancia. El tamaño n acompaña el cálculo; P99 con pocas muestras no permite caracterizar colas reales. Una semilla reproduce decisiones de inyección, no tiempos exactos del scheduler o hardware. Carga máxima local:1000 operaciones, sin telefonía real ni servicios externos.
+
+**DEMOSTRADO POR PRUEBA** — `node scripts/financial-evidence.mjs` ejecutó 10 transferencias de $1 contra API HTTP loopback y SQLite en memoria. Mediana real total: 304.59 ms; media de demora artificial: 300.00 ms; media de acción HTTP/motor: 3.84 ms. Son muestras de software en este entorno, no mediciones de operadora. P95/P99 no permiten caracterizar colas con n=10. Evidencia completa sin tokens: artifacts/checks/financial-metrics.json.
