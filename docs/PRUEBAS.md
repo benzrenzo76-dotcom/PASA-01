@@ -14,7 +14,9 @@ Fecha: **2026-10-24**. Este registro separa verificación local, CI y teléfono 
 
 ## CI en GitHub
 
-**NO VERIFICADO** — Workflow `.github/workflows/pasa01.yml` preparado, todavía sin ejecución observada ni artifact remoto. El 2026-10-24 se verificó acceso de lectura y escritura a https://github.com/benzrenzo76-dotcom/PASA-01. Se está publicando el proyecto existente para ejecutar CI. No se afirma que CI pase hasta observar la ejecución.
+**DEMOSTRADO POR PRUEBA** — El 2026-10-24 se verificó acceso de lectura y escritura a https://github.com/benzrenzo76-dotcom/PASA-01 y se abrió el PR #1 con el proyecto existente. La primera ejecución de CI falló antes de compilar: setup-android intentó instalar el paquete obsoleto `tools`, inexistente en el repositorio SDK. Ejecución: https://github.com/benzrenzo76-dotcom/PASA-01/actions/runs/40063512095. Se corrigió la configuración para instalar sólo `platform-tools`; SDK 35 y Build Tools se instalan en el paso siguiente.
+
+**NO VERIFICADO** — Compilación y artifact remoto de la configuración corregida: pendientes de observar la nueva ejecución. La compilación local aprobada se registra por separado.
 
 ## Dispositivo físico
 
