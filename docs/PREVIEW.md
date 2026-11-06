@@ -14,8 +14,16 @@ Publicación privada verificada por Sites. Sintaxis JS, archivos, búsqueda con 
 
 Site project_id: appgprj_6aed2d967d7481919ad0d4350d97de6a
 
-Source commit del Site: 7b4af8e5386908f5860dd8586006ca7c7996fff1
+Source commit del Site: c8f58b7b51f5f935233fac75d61cbb25499242f9
 
 Checkout de la sesión: /workspace/sites/pasa-vista-previa. Identidad en .openai/hosting.json; archivos estáticos en dist/. El código de la vista previa está guardado en el repositorio fuente privado del Site. Para retomarlo desde otro entorno usar get_site y la credencial de ese mismo proyecto, sin crear otro Site ni cambiar su acceso privado.
 
 La aplicación Next/PostgreSQL de este GitHub permanece independiente. Cambios futuros de su diseño deben reflejarse en la vista previa para no presentar un avance distinto del producto real.
+
+## Abrir un negocio con un nombre
+
+La vista previa incorpora “Abrir mi negocio” en la navegación y la portada. Ruta directa: `#/abrir-negocio`. Solo pide el nombre, valida que no esté vacío y abre el panel sin registro, correo ni contraseña de la aplicación. El nombre se conserva en este navegador y puede cambiarse desde el panel.
+
+El nuevo espacio empieza sin reservas, servicios, equipo ni horarios y no hereda datos de los cuatro ejemplos. El editor y el micrositio propio muestran el nombre elegido. Los datos de esta función siguen siendo locales de la vista previa; la autorización del backend Next/PostgreSQL permanece independiente.
+
+Comprobado con Node: sintaxis JS, formulario de un único campo sin email/password, nombres vacíos/largos, normalización, persistencia del nombre y ruta directa al panel. Publicación privada verificada por Sites. QA visual en navegador pendiente.
