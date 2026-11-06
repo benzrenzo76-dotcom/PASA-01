@@ -1,0 +1,336 @@
+ PROMPT MAESTRO PARA CODEX
+ Plataforma SaaS y marketplace multisectorial de servicios | Versión 1
+
+ Documento completo para copiar en Codex o adjuntar como especificación. Instrucción principal:
+ implementar por fases, probar y documentar.
+
+
+
+
+ 0. MISIÓN Y ROL
+ Actuá como un equipo senior de arquitectura, ingeniería full-stack, bases de datos, diseño UX/UI,
+ seguridad, QA, DevOps e integración de pagos. Construí una aplicación web real, funcional, responsive,
+ mantenible y desplegable. No entregues una maqueta con botones falsos. El fundador no es programador:
+ tomá decisiones técnicas reversibles, documentalas y explicá cómo ejecutar el producto. Inspeccioná el
+ repositorio, planificá brevemente y empezá a programar. Una función está terminada solo si el flujo
+ completo funciona y fue probado. Preferimos una V1 pequeña y sólida a una plataforma enorme
+ incompleta.
+
+
+ 1. VISIÓN DEL NEGOCIO
+ Plataforma argentina que combina SaaS de gestión para negocios de servicios, micrositios personalizables,
+ agenda y reservas online, marketplace de descubrimiento, cuentas de clientes, estadísticas, catálogo de
+ productos y arquitectura extensible para pagos y fidelización. Foco comercial inicial: Monte Grande,
+ Esteban Echeverría y Zona Sur del Gran Buenos Aires. Sin bloqueo técnico por ciudad ni país. El negocio
+ puede crear y operar su presencia digital sin desarrolladores; el cliente puede descubrir, comparar y
+ reservar desde el celular.
+
+
+ 2. RUBROS Y MOTOR UNIVERSAL
+ Soportar desde el día uno barberías, peluquerías, tatuajes, uñas, estética, cejas/pestañas, lavaderos,
+ detailing y otras categorías configurables. NO construir aplicaciones separadas por rubro. Un motor
+ universal debe representar servicios de distinta duración, precios fijos o presupuestos, profesionales
+ opcionales, recursos físicos, tiempos de preparación y restricciones. Ejemplos: corte de 30 minutos con
+ barbero; consulta de tatuaje de 30 minutos con presupuesto posterior; uñas de 90 minutos con profesional;
+ lavado de 60 minutos que consume una bahía; detailing de cuatro horas que consume un box. Categorías
+ específicas mediante configuración y extensiones.
+
+
+ 3. PRINCIPIOS INNEGOCIABLES
+ Mobile-first, accesibilidad, español argentino, ARS y zona horaria America/Argentina/Buenos_Aires.
+ Autogestión de dueños sin intervención del fundador. Plan básico realmente funcional, sin bloqueos
+ artificiales. Arquitectura multi-tenant: aislamiento estricto de negocios, validado en backend. Sin datos
+ ficticios en producción ni pagos marcados como exitosos sin confirmación. Preparar internacionalización
+ futura sin sobredesarrollarla. Evitar microservicios y complejidad prematura.
+
+
+
+
+Plataforma V1 · Especificación para Codex                                                                 Página 1
+ 4. ALCANCE DE LA V1
+ Núcleo obligatorio: registro/login, roles, creación de negocios, categorías, perfiles, servicios, empleados,
+ recursos, horarios, bloqueos, reservas sin solapamientos, dashboard, micrositios con plantillas y editor
+ acotado, marketplace con filtros, perfil de cliente, historial, emails, métricas, administración general,
+ pruebas y despliegue. Segunda capa de V1, solo después del núcleo estable: productos, inventario,
+ pedidos, Mercado Pago sandbox, estados de pago/reembolso, promociones y estructura de fidelización.
+ Fuera de V1: micropréstamos, billetera o tarjeta propia, suscripción de clientes, cashback financiado, app
+ nativa, IA generativa en producto, contabilidad integral, logística propia, editor libre tipo Wix y publicidad
+ avanzada.
+
+
+ 5. STACK TECNOLÓGICO
+ Preferencia: Next.js App Router, TypeScript estricto, React, Tailwind, shadcn/ui, PostgreSQL, Prisma, Zod,
+ React Hook Form, Auth.js o autenticación madura equivalente, Vitest, Playwright, almacenamiento
+ compatible con S3, correo configurable y Mercado Pago. Verificar versiones y documentación actuales; no
+ inventar APIs. Si el repositorio existente recomienda otro stack, justificarlo. Arquitectura de monolito
+ modular: auth, tenants, catálogo, agenda, marketplace, comercio, pagos, administración, notificaciones.
+ Separar interfaz, validación, permisos, dominio y persistencia.
+
+
+ 6. ROLES Y AUTORIZACIÓN
+ Visitante: explorar negocios y disponibilidad pública. Cliente: cuenta, perfil, reservar, cancelar según
+ política, consultar historial, pagos y pedidos. Propietario: crear negocios, administrar servicios, personal,
+ agenda, micrositio, productos, métricas y plan. Empleado: acceder solo a agenda y operaciones
+ autorizadas. Administrador global: categorías, cuentas, negocios, planes, incidencias y auditoría. Un
+ usuario puede administrar varios negocios con membresías y roles específicos. Ningún empleado ve por
+ defecto los ingresos globales. Los permisos deben verificarse en cada operación de servidor, nunca solo en
+ componentes.
+
+
+ 7. ONBOARDING DEL NEGOCIO
+ Flujo: registro, crear negocio, categoría, nombre, slug, ubicación, servicios, horarios, plantilla y publicación.
+ Permitir borradores y retomar. Campos: nombre, identificador, slug único, descripción, categoría
+ principal/secundaria, dirección, localidad, provincia, país, coordenadas opcionales, teléfono, WhatsApp,
+ redes, logo, portada, galería, horarios, estado de publicación, políticas de cancelación, métodos de pago y
+ configuración visual. URLs tipo /negocio/barberia-ejemplo; no asumir dominio real. Validar slugs, imágenes
+ y datos.
+
+
+ 8. MICROSITIOS Y EDITOR VISUAL
+ Página pública con cabecera, marca, portada, descripción, servicios, precios, equipo, galería, horarios,
+ ubicación, redes, botón de reserva y productos cuando corresponda. Editor con vista previa y controles de
+ plantilla, paleta, tipografía predefinida, imágenes, textos, orden y visibilidad de secciones, botones y
+ banners. Guardar borrador y publicar. Crear tres plantillas responsive: Minimal (limpia), Urban
+ (contrastada, barberías/tatuajes), Studio (sofisticada, estética). No permitir CSS/JS arbitrario de
+ propietarios. Preparar modelo para plantillas premium, sin venderlas hasta tener cobros reales y control de
+ acceso servidor.
+
+
+
+
+Plataforma V1 · Especificación para Codex                                                                    Página 2
+ 9. CATÁLOGO UNIVERSAL DE SERVICIOS
+ Cada servicio: nombre, descripción, categoría, duración, precio y moneda, tipo de precio (fijo, orientativo, a
+ presupuestar), imágenes, activo/inactivo, profesionales habilitados, recursos requeridos, buffer de
+ preparación/limpieza, anticipación mínima/máxima, instrucciones previas y política de cancelación. Mostrar
+ claramente precios estimados. No suponer que todo servicio necesita empleado seleccionado ni precio fijo.
+
+
+ 10. PERSONAL Y RECURSOS
+ Personal: perfil, foto, especialidades, servicios, horarios, ausencias, rol y estado. Relación
+ muchos-a-muchos entre empleados y servicios. Recursos reservables: sillones, cabinas, boxes, salas,
+ bahías de lavado y equipamiento. Un servicio puede necesitar uno o varios recursos. Disponibilidad real
+ considera empleado, recurso, horarios, ausencias, bloqueos, duración y buffers. La asignación automática
+ debe evitar conflictos.
+
+
+ 11. MOTOR DE RESERVAS
+ Flujo cliente: negocio > servicio > profesional opcional > fecha > horarios reales > resumen de
+ duración/precio/política > confirmar > email > historial. Estados controlados: pendiente de confirmación,
+ pendiente de pago, confirmada, en curso, completada, cancelada por cliente, cancelada por negocio, no
+ asistió, expirada. Definir transiciones válidas. Disponibilidad calculada en servidor. Proteger contra
+ solicitudes concurrentes con transacciones, restricciones y estrategia explícita de locking/serialización. Si
+ un horario desaparece, devolver error claro. Guardar instantes en UTC y presentar en zona del negocio.
+ Reservas pagadas no implican reembolso automático. Agenda de día/semana/lista, filtros por
+ empleado/estado, reservas manuales y bloqueos por vacaciones/descansos/mantenimiento. Probar dos
+ usuarios intentando reservar simultáneamente el mismo recurso.
+
+
+ 12. MARKETPLACE
+ Página central para descubrir negocios por nombre, servicio, categoría, localidad y texto. Filtros por
+ categoría, ubicación, precio y disponibilidad. Tarjetas con imagen, nombre, categoría, localidad, precio
+ orientativo cuando exista y acceso al perfil/reserva. Preparar proximidad geográfica sin inventar distancias
+ si faltan coordenadas. No mostrar estrellas ni reseñas inventadas. Orden inicial transparente por
+ relevancia, coincidencia y ubicación; sin posicionamiento pago oculto. SEO básico, metadatos y URLs
+ compartibles.
+
+
+ 13. ÁREA DEL CLIENTE
+ Perfil, contacto, próximas reservas, historial, estados, cancelaciones válidas, pagos y pedidos cuando
+ existan. Datos mínimos y privacidad por negocio: un establecimiento solo puede consultar datos de la
+ relación comercial que tiene con ese cliente; nunca su historial en otros negocios. Acceso desde móvil con
+ navegación clara.
+
+
+ 14. PANEL Y MÉTRICAS DEL NEGOCIO
+ Secciones: resumen, agenda, reservas, servicios, personal, recursos, clientes, productos, estadísticas, sitio
+ web, configuración, plan y facturación. KPIs: reservas del día, futuras, pendientes, completadas,
+ cancelaciones, clientes nuevos y recurrentes, servicios populares, ingresos confirmados y valor estimado
+ de reservas como categorías distintas. Nunca llamar ganancias netas a facturación sin costos. Períodos
+ configurables. Métricas de visitas con privacidad y diferenciación entre vistas, usuarios únicos y
+ conversiones. Estados vacíos y gráficos solo con datos reales.
+
+
+
+
+Plataforma V1 · Especificación para Codex                                                                 Página 3
+ 15. PRODUCTOS Y PEDIDOS
+ Catálogo de productos físicos (pomadas, champús, accesorios, productos automotores): nombre,
+ descripción, precio, imágenes, SKU opcional, stock, categoría, estado, retiro/envío. Pedido con artículos,
+ cantidades, subtotal, estado, modalidad de entrega y negocio propietario. Carrito de un solo negocio en V1,
+ no multivendedor. Control de stock transaccional y prevención de stock negativo en concurrencia. Envío
+ gestionado por el negocio; no crear logística propia. No marcar pedido pagado sin confirmación del
+ proveedor.
+
+
+ 16. PAGOS: ALCANCE Y REGLAS
+ Objetivo: permitir pago del importe completo de servicios y productos dentro de la plataforma. Investigar
+ documentación oficial vigente de Mercado Pago Argentina antes de integrar. Empezar en sandbox. Validar
+ condiciones de marketplace, split, cuentas de vendedores, comisiones, liquidaciones y requisitos
+ contractuales. No asumir que la plataforma puede custodiar fondos de terceros o distribuirlos libremente.
+ Si faltan aprobaciones, dejar flujo explícitamente bloqueado sin simular transferencias. Credenciales solo
+ servidor, webhooks verificados, eventos idempotentes, estados
+ pendiente/aprobado/rechazado/reembolsado, conciliación, reintentos seguros, logs y prevención de
+ duplicados. Nunca confiar solo en la URL de retorno del navegador ni almacenar datos completos de
+ tarjeta. Google Pay: verificar soporte real del procesador, no prometerlo. Pagos presenciales: permitir
+ registro manual como pago externo no verificado, separado del pago procesado por plataforma. Separar
+ siempre estado de reserva, estado de pedido y estado financiero.
+
+
+ 17. PLANES B2B
+ Modelo mixto: plan Básico con micrositio, reservas, agenda, servicios, personal razonable, métricas básicas
+ y marketplace; plan Profesional con más personal/recursos, reportes avanzados, diseños y funciones
+ comerciales; plan Partner sin cuota fija y con comisión prevista del 1% sobre pagos elegibles procesados
+ por plataforma, con capacidades premium definidas. La comisión del procesador es separada y el 1% NO
+ es beneficio neto. Precios de suscripción configurables, sin valores definitivos hardcodeados. Implementar
+ tablas de planes/capacidades/suscripciones y validación backend. No fingir facturación recurrente si no
+ está integrada. Dejar términos, elegibilidad y liquidación pendientes de validación comercial/legal.
+
+
+ 18. FIDELIZACIÓN: PREPARACIÓN SIN LANZAMIENTO
+ Futuro: puntos por compras y servicios efectivamente pagados, canjeables SOLO en negocios
+ voluntariamente adheridos. Negocios definen premios, cupos, horarios y reglas; incentivos de plataforma
+ pueden ser descuentos en suscripciones o comisiones. Reversiones por reembolso y límites antifraude. V1:
+ diseñar extensibilidad, sin prometer puntos ni servicios gratis. Si se crean tablas preliminares, usar libro
+ mayor de movimientos, referencia a pago, idempotencia, cuentas, recompensas, afiliación, redenciones y
+ reversión. No generar pasivos de puntos sin modelo económico contractual. Membresía de consumidores,
+ descuentos financiados por plataforma y cashback quedan fuera de V1.
+
+
+ 19. UX, IDENTIDAD Y ACCESIBILIDAD
+ Marca provisional configurable: no inventar nombre definitivo. UI moderna, elegante y profesional, con
+ fotos bien presentadas, jerarquía tipográfica, animaciones discretas y formularios breves. Dashboard con
+ navegación consistente, filtros, estados vacíos, carga, errores claros y confirmación destructiva. WCAG 2.2
+ AA como objetivo: contraste, teclado, foco, etiquetas, lectores de pantalla, mensajes de error y reducción
+ de movimiento. Responsive probado en móvil y escritorio. Español argentino natural.
+
+
+
+
+Plataforma V1 · Especificación para Codex                                                                  Página 4
+ 20. SEGURIDAD Y PRIVACIDAD
+ Hash robusto de contraseñas cuando aplique, sesiones/cookies seguras, autorización por tenant y rol en
+ servidor, validación de entradas, CSRF cuando corresponda, XSS, rate limiting, consultas parametrizadas,
+ límites y validación de uploads, secretos en variables de entorno, auditoría de cambios, logs sin datos
+ sensibles, backups y recuperación documentados. Probar ataques de acceso horizontal entre negocios.
+ Considerar legislación argentina de datos personales y comercio electrónico; no afirmar cumplimiento legal
+ completo sin asesoramiento. Política de eliminación y minimización de datos.
+
+
+ 21. MODELO DE DATOS
+ Diseñar esquema relacional normalizado con entidades justificadas: User, Account, Session, Business,
+ BusinessCategory, BusinessMembership, BusinessLocation, StaffProfile, StaffAvailability, StaffAbsence,
+ Resource, ResourceAvailability, Service, ServiceStaff, ServiceResourceRequirement, Booking,
+ BookingStatusHistory, BookingBlock, CustomerProfile, BusinessCustomer, Product, ProductImage,
+ InventoryMovement, Order, OrderItem, Payment, PaymentEvent, Refund, SubscriptionPlan, PlanFeature,
+ BusinessSubscription, WebsiteTheme, BusinessWebsiteConfig, MediaAsset, Notification, AuditLog.
+ Opcionales futuros: LoyaltyAccount, LoyaltyTransaction, Reward, RewardPartner, RewardRedemption.
+ Definir índices compuestos por negocio/fecha, claves, restricciones, borrado, migraciones y consistencia de
+ importes/monedas. Evitar tablas de adorno.
+
+
+ 22. API Y DOMINIO
+ Separar UI, validación Zod, autenticación, permisos, reglas de dominio, repositorios y proveedores
+ externos. Centralizar cálculo de disponibilidad y comprobación de permisos. Contratos tipados, códigos
+ HTTP apropiados, errores estructurados, endpoints/acciones documentados. No colocar toda la lógica de
+ reservas en componentes React. Evitar dependencias circulares y microservicios prematuros.
+
+
+ 23. NOTIFICACIONES
+ Correo transaccional para verificación/registro, reserva confirmada/cancelada/modificada, invitación de
+ empleado y pedido confirmado. Plantillas profesionales en español. Proveedor configurable; en desarrollo
+ mostrar correos en consola o buzón local sin enviarlos a destinatarios reales. Preparar interfaz para
+ WhatsApp/push futuros sin fingir integración existente.
+
+
+ 24. ADMINISTRACIÓN GLOBAL
+ Panel solo para administradores autorizados: negocios, usuarios, categorías, estados de publicación,
+ métricas agregadas, planes, plantillas, incidencias, suspensiones justificadas y auditorías. Proteger datos
+ financieros/personales, no permitir suplantación silenciosa ni eliminación irreversible sin confirmación.
+ Registrar acciones administrativas sensibles.
+
+
+ 25. PRUEBAS OBLIGATORIAS
+ Crear y EJECUTAR unitarias, integración y E2E con Vitest/Playwright: registro cliente/propietario, creación
+ de negocio, editor, servicio, empleado, reserva válida, duplicada y concurrente, fuera de horario, bloqueo
+ por ausencia, cancelación permitida/prohibida, intento de acceso a otro tenant, alteración de precio desde
+ cliente, producto, stock concurrente, webhook duplicado, pago pendiente/rechazado, reembolso
+ registrado, panel admin protegido, móvil y recorrido completo de reserva. No borrar tests para que pase el
+ pipeline. No declarar pruebas pasadas sin ejecutarlas.
+
+
+
+
+Plataforma V1 · Especificación para Codex                                                                Página 5
+ 26. DESPLIEGUE Y OPERACIÓN
+ README, .env.example sin secretos, instalación, desarrollo, migraciones, seeds de demostración, test,
+ build, despliegue, variables, backups, recuperación, integraciones pendientes y checklist preproducción.
+ No desplegar ni activar cobros reales sin autorización expresa. No ejecutar comandos destructivos sobre
+ datos reales sin permiso. Preparar observabilidad básica y tratamiento de errores.
+
+
+ 27. DATOS DEMO Y RECORRIDO VERIFICABLE
+ Seeds solo en desarrollo: barbería, estudio de tatuajes, salón de uñas y lavadero, con
+ duraciones/recursos/horarios diferentes. Nunca publicar negocios demo como reales. Demostración
+ funcional: cliente descubre negocio, elige servicio, ve disponibilidad, reserva, propietario recibe turno,
+ completa servicio y dashboard refleja datos. Mostrar claramente qué está simulado y qué es real.
+
+
+ 28. FASES DE IMPLEMENTACIÓN
+ Fase 0: inspección del repositorio, diagnóstico, decisiones técnicas y plan breve. Fase 1: proyecto, DB,
+ auth, roles, multi-tenant, componentes, pruebas. Fase 2: onboarding, perfiles, servicios, empleados,
+ recursos, horarios. Fase 3: disponibilidad, reservas, concurrencia, agenda, cancelaciones, emails y tests.
+ Fase 4: micrositios, plantillas, editor, galerías y SEO. Fase 5: marketplace y búsqueda. Fase 6: dashboard,
+ métricas, productos, stock y pedidos. Fase 7: pagos sandbox, webhooks, planes y permisos por plan. Fase
+ 8: pruebas integrales, seguridad, rendimiento, accesibilidad, documentación y preparación de despliegue.
+ Mantener repositorio utilizable tras cada fase.
+
+
+ 29. AUTONOMÍA Y LÍMITES
+ No detenerse después del plan: empezar a implementar. Resolver decisiones técnicas menores y
+ reversibles sin pedir confirmación. Pedir autorización antes de gastar dinero, contratar servicios, activar
+ cobros reales, publicar en producción, borrar datos importantes, modificar seguridad externa o asumir
+ obligaciones legales. Si faltan claves, crear adaptadores de desarrollo explícitos y documentar integración
+ pendiente. Investigar fallos, corregirlos, no ocultarlos desactivando TypeScript o tests. No añadir botones
+ sin funcionalidad. Registrar progreso para futuras sesiones.
+
+
+ 30. DOCUMENTACIÓN DE CONTINUIDAD
+ Mantener docs/PRODUCT_VISION.md, docs/ARCHITECTURE.md, docs/DATABASE.md, docs/ROADMAP.md,
+ docs/DECISIONS.md, docs/TESTING.md, docs/DEPLOYMENT.md y docs/PROGRESS.md. Registrar decisiones,
+ funcionalidades completas, pruebas ejecutadas, bloqueos y siguiente tarea. Debe poder retomarse desde
+ otra sesión sin perder contexto.
+
+
+ 31. CRITERIOS DE ACEPTACIÓN
+ La V1 central funciona si un propietario se registra, crea negocio, categoría, servicios, empleados/recursos,
+ horarios, publica y edita micrositio; un cliente lo encuentra, ve disponibilidad real, reserva; el sistema
+ impide conflictos; el propietario visualiza/completa turno; ambos ven estado; estadísticas reflejan datos;
+ tenants no acceden a datos ajenos; pruebas principales pasan y README permite ejecutar la app.
+ Productos y pagos tienen criterios propios; NO marcar integración financiera terminada si faltan
+ credenciales, aprobación o pruebas sandbox.
+
+
+
+
+Plataforma V1 · Especificación para Codex                                                                     Página 6
+ 32. PRIORIDAD SI HAY LÍMITES
+ Orden: 1 seguridad/modelo de datos; 2 auth/multi-tenant; 3 creación de negocios; 4 servicios/horarios; 5
+ reservas reales; 6 micrositios; 7 marketplace; 8 dashboard; 9 métricas; 10 productos; 11 pagos sandbox;
+ 12 suscripciones; 13 futuras extensiones. Preferir seis módulos sólidos a doce rotos.
+
+
+ 33. INFORMES Y ORDEN FINAL
+ Al finalizar cada fase, informar implementado, archivos cambiados, pruebas ejecutadas y resultado, fallos,
+ bloqueos y próximos pasos. Etiquetar IMPLEMENTADO (código funcional), PROBADO (verificado),
+ PENDIENTE (no construido) y BLOQUEADO (requiere credencial/decisión). No confundirlos. Este proyecto no
+ es una landing ni un turnero solo para barberías: es una base de SaaS y marketplace multisectorial con
+ ambición de escalar. Inspeccioná entorno y repositorio, escribí plan breve y comenzá inmediatamente Fase
+ 1. Implementá, probá, documentá y continuá por fases mientras lo permita el entorno. No inventes
+ resultados. COMENZÁ AHORA.
+
+
+
+
+Plataforma V1 · Especificación para Codex                                                             Página 7
+

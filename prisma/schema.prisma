@@ -1,0 +1,324 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String               @id
+  name          String
+  email         String               @unique
+  emailVerified Boolean              @default(false)
+  image         String?
+  isAdmin       Boolean              @default(false)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  memberships   BusinessMembership[]
+  bookings      Booking[]
+  audits        AuditLog[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+model RateLimit {
+  id          String @id @default(cuid())
+  key         String @unique
+  count       Int
+  lastRequest Float
+}
+
+enum MemberRole {
+  OWNER
+  EMPLOYEE
+}
+
+enum AssetKind {
+  STAFF
+  RESOURCE
+}
+
+enum PriceType {
+  FIXED
+  ESTIMATED
+  QUOTE
+}
+
+enum BookingStatus {
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELED_CUSTOMER
+  CANCELED_BUSINESS
+  NO_SHOW
+}
+
+enum Theme {
+  MINIMAL
+  URBAN
+  STUDIO
+}
+
+model BusinessCategory {
+  id         String     @id @default(cuid())
+  slug       String     @unique
+  name       String
+  businesses Business[]
+}
+
+model Business {
+  id                String               @id @default(cuid())
+  name              String
+  slug              String               @unique
+  description       String               @default("")
+  categoryId        String
+  category          BusinessCategory     @relation(fields: [categoryId], references: [id])
+  address           String               @default("")
+  city              String
+  province          String               @default("Buenos Aires")
+  country           String               @default("AR")
+  timezone          String               @default("America/Argentina/Buenos_Aires")
+  phone             String               @default("")
+  published         Boolean              @default(false)
+  suspended         Boolean              @default(false)
+  cancellationHours Int                  @default(24)
+  websiteDraft      Json                 @default("{}")
+  websiteLive       Json                 @default("{}")
+  isDemo            Boolean              @default(false)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  memberships       BusinessMembership[]
+  services          Service[]
+  assets            Asset[]
+  hours             BusinessHours[]
+  blocks            BookingBlock[]
+  bookings          Booking[]
+  audits            AuditLog[]
+
+  @@index([published, categoryId, city])
+}
+
+model BusinessMembership {
+  id         String     @id @default(cuid())
+  businessId String
+  userId     String
+  role       MemberRole
+  assetId    String?
+  asset      Asset?     @relation(fields: [businessId, assetId], references: [businessId, id], onDelete: Restrict, onUpdate: NoAction, map: "membership_asset_same_business")
+  business   Business   @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, userId])
+  @@index([userId])
+}
+
+model BusinessHours {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  weekday     Int
+  openMinute  Int
+  closeMinute Int
+
+  @@unique([businessId, weekday])
+}
+
+model Asset {
+  id          String               @id @default(cuid())
+  businessId  String
+  business    Business             @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name        String
+  kind        AssetKind
+  active      Boolean              @default(true)
+  assignments ServiceAsset[]
+  allocations BookingAllocation[]
+  blocks      BookingBlock[]
+  hours       AssetHours[]
+  memberships BusinessMembership[]
+
+  @@unique([businessId, id])
+  @@index([businessId, kind])
+}
+
+model AssetHours {
+  id          String @id @default(cuid())
+  businessId  String
+  assetId     String
+  asset       Asset  @relation(fields: [businessId, assetId], references: [businessId, id], onDelete: Cascade)
+  weekday     Int
+  openMinute  Int
+  closeMinute Int
+
+  @@unique([assetId, weekday])
+}
+
+model Service {
+  id               String         @id @default(cuid())
+  businessId       String
+  business         Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name             String
+  description      String         @default("")
+  duration         Int
+  bufferBefore     Int            @default(0)
+  bufferAfter      Int            @default(0)
+  priceCents       Int            @default(0)
+  currency         String         @default("ARS")
+  priceType        PriceType      @default(FIXED)
+  minNoticeMinutes Int            @default(60)
+  maxAdvanceDays   Int            @default(60)
+  active           Boolean        @default(true)
+  assets           ServiceAsset[]
+  bookings         Booking[]
+
+  @@unique([businessId, id])
+  @@index([businessId, active])
+}
+
+model ServiceAsset {
+  businessId String
+  serviceId  String
+  assetId    String
+  service    Service @relation(fields: [businessId, serviceId], references: [businessId, id], onDelete: Cascade)
+  asset      Asset   @relation(fields: [businessId, assetId], references: [businessId, id], onDelete: Cascade)
+
+  @@id([serviceId, assetId])
+}
+
+model Booking {
+  id                String                 @id @default(cuid())
+  businessId        String
+  business          Business               @relation(fields: [businessId], references: [id])
+  serviceId         String
+  service           Service                @relation(fields: [businessId, serviceId], references: [businessId, id])
+  customerId        String
+  customer          User                   @relation(fields: [customerId], references: [id])
+  startsAt          DateTime               @db.Timestamptz(3)
+  endsAt            DateTime               @db.Timestamptz(3)
+  serviceName       String
+  priceCents        Int
+  priceType         PriceType
+  currency          String
+  cancellationHours Int
+  status            BookingStatus          @default(CONFIRMED)
+  idempotencyKey    String
+  createdAt         DateTime               @default(now())
+  allocations       BookingAllocation[]
+  history           BookingStatusHistory[]
+  notifications     Notification[]
+
+  @@unique([businessId, id])
+  @@unique([customerId, idempotencyKey])
+  @@index([businessId, startsAt, status])
+  @@index([customerId, startsAt])
+}
+
+model BookingAllocation {
+  id         String   @id @default(cuid())
+  businessId String
+  bookingId  String
+  assetId    String
+  booking    Booking  @relation(fields: [businessId, bookingId], references: [businessId, id], onDelete: Cascade)
+  asset      Asset    @relation(fields: [businessId, assetId], references: [businessId, id])
+  startsAt   DateTime @db.Timestamptz(3)
+  endsAt     DateTime @db.Timestamptz(3)
+  active     Boolean  @default(true)
+
+  @@unique([bookingId, assetId])
+  @@index([businessId, assetId, startsAt])
+}
+
+model BookingStatusHistory {
+  id        String        @id @default(cuid())
+  bookingId String
+  booking   Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  status    BookingStatus
+  actorId   String
+  createdAt DateTime      @default(now())
+}
+
+model BookingBlock {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  assetId    String?
+  asset      Asset?   @relation(fields: [businessId, assetId], references: [businessId, id])
+  startsAt   DateTime @db.Timestamptz(3)
+  endsAt     DateTime @db.Timestamptz(3)
+  reason     String
+
+  @@index([businessId, startsAt])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  bookingId String
+  booking   Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  recipient String
+  subject   String
+  body      String
+  attempts  Int       @default(0)
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([sentAt, createdAt])
+}
+
+model AuditLog {
+  id         String    @id @default(cuid())
+  businessId String?
+  business   Business? @relation(fields: [businessId], references: [id])
+  actorId    String
+  actor      User      @relation(fields: [actorId], references: [id])
+  action     String
+  entityId   String
+  createdAt  DateTime  @default(now())
+
+  @@index([businessId, createdAt])
+}

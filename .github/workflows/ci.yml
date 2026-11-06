@@ -1,0 +1,41 @@
+name: Validate platform core
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: pasa
+          POSTGRES_PASSWORD: pasa_local_only
+          POSTGRES_DB: pasa_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U pasa"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://pasa:pasa_local_only@localhost:5432/pasa_test?schema=public
+      TEST_DATABASE_URL: postgresql://pasa:pasa_local_only@localhost:5432/pasa_test?schema=public
+      BETTER_AUTH_URL: http://localhost:3000
+      BETTER_AUTH_SECRET: ci-only-test-secret-with-over-32-characters
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: cp .env.example .env
+      - run: npm run db:generate
+      - run: npm run db:deploy
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:e2e
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high
